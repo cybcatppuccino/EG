@@ -1,6 +1,2 @@
 # EG
-Formalizing Euclidean Geometry in Lean
-
-
-
-*This is a test.*
+This is a project about formalizing Euclidean Geometry based on Lean4. 
