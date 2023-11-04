@@ -29,6 +29,19 @@ scoped infix : 50 "LiesInt" => lies_int
 -- scoped infix : 50 "LiesIn" => lies_in
 -- scoped notation A "IsInx" F G => (is_inx A F G) -- this notation doesn't work as imagined
 
+section compatibility
+
+theorem ne_of_lieson_and_not_lieson {P : Type _} [EuclideanPlane P] {α : Type _} [Carrier P α] {F : α} {X Y : P} (hx : X LiesOn F) (hy : ¬ Y LiesOn F) : X ≠ Y := by
+  by_contra h
+  rw [h] at hx
+  tauto
+
+theorem ne_of_liesint_and_not_liesint {P : Type _} [EuclideanPlane P] {α : Type _} [Interior P α] {F : α} {X Y : P} (hx : X LiesInt F) (hy : ¬ Y LiesInt F) : X ≠ Y := by
+  by_contra h
+  rw [h] at hx
+  tauto
+end compatibility
+
 /- Three figures concurrent at a point -/
 def concurrent {P : Type _} [EuclideanPlane P] {α β γ: Type _} [Carrier P α] [Carrier P β] [Carrier P γ] (A : P) (F : α) (G : β) (H : γ) : Prop := A LiesOn F ∧ A LiesOn G ∧ A LiesOn H
 
@@ -39,5 +52,34 @@ class Convex2D (P: Type _) [EuclideanPlane P] (α : Type _) extends (Carrier P �
 /- Theorem interior is convex-/
 
 /- Intersection -/
+
+class LinearObj (α : Type*) where
+  toProj : α → Proj
+
+class HasCongr (α : Type*) where
+  congr : α → α → Prop
+  refl : ∀ (a : α), congr a a
+  trans : ∀ {a b c : α}, congr a b → congr b c → congr a c
+  symm : ∀ {a b : α}, congr a b → congr b a
+
+instance (α : Type*) [HasCongr α] : IsEquiv α HasCongr.congr where
+  refl := HasCongr.refl
+  trans _ _ _ := HasCongr.trans
+  symm _ _ := HasCongr.symm
+
+scoped infix : 50 "≅" => HasCongr.congr
+
+scoped infix : 50 "IsCongrTo" => HasCongr.congr
+
+class HasACongr (α : Type*) where
+  acongr : α → α → Prop
+  symm : ∀ {a b : α}, acongr a b → acongr b a
+
+instance (α : Type*) [HasACongr α] : IsSymm α HasACongr.acongr where
+  symm _ _ := HasACongr.symm
+
+scoped infix : 50 "≅ₐ" => HasACongr.acongr
+
+scoped infix : 50 "IsCongrTo" => HasACongr.acongr
 
 end EuclidGeom
